@@ -1,0 +1,379 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+* {
+	box-sizing: border-box;
+	font-family: 'Montserrat', sans-serif;
+	font-optical-sizing: auto;
+	/* margin: 0;
+  padding: 0; */
+}
+
+:host {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 97vh;
+	background-color: #f8f9fa;
+	font-family: 'Montserrat', sans-serif;
+}
+
+.messages {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	flex: 1;
+	padding: 0.4rem;
+	overflow-y: auto;
+}
+.message {
+	position: relative;
+	border-radius: 10px;
+	margin-bottom: 5px;
+	padding: 0.6rem 0.5rem;
+	width: auto;
+	max-width: 73%;
+	background-color: #f0f0f0;
+	font-size: 14px;
+	word-wrap: break-word;
+}
+
+.user-message {
+	align-self: flex-end;
+	background-color: #f0f0f0;
+}
+
+.bot-message {
+	align-self: flex-start;
+	background-color: #c41230;
+	color: #fff;
+}
+
+.message::before {
+	content: '';
+	position: absolute;
+	bottom: -10px;
+	border-style: solid;
+	z-index: 1;
+}
+
+.user-message::before {
+	right: 10px;
+	border-width: 0 10px 10px 0;
+	border-color: transparent #f0f0f0 transparent transparent;
+}
+
+.bot-message::before {
+	bottom: -8px;
+	left: 0.1px;
+	border-width: 0 0 15px 15px;
+	border-color: transparent transparent transparent #c01023;
+}
+
+@keyframes loading {
+	0% {
+		content: '.';
+	}
+	33% {
+		content: '..';
+	}
+	66% {
+		content: '...';
+	}
+}
+
+.bot-message.loading::after {
+	content: '.';
+	animation: loading 1s infinite;
+	display: inline-block;
+	width: 1em; /* Adjust size as needed */
+	height: 1em; /* Adjust size as needed */
+	margin-left: 5px; /* Adjust spacing from message */
+	vertical-align: middle;
+}
+
+.loading-animation {
+	display: inline-block;
+	margin-left: 5px; /* Adjust spacing from message */
+	width: 1em; /* Adjust size as needed */
+	height: 1em; /* Adjust size as needed */
+	border: 3px solid #c10b1f; /* Loading animation border color */
+	border-radius: 50%; /* Circle shape */
+	animation: spin 1s linear infinite; /* Animation properties */
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg); /* Start rotation at 0 degrees */
+	}
+	100% {
+		transform: rotate(360deg); /* End rotation at 360 degrees */
+	}
+}
+
+.input {
+	display: flex;
+	padding: 10px;
+	background-color: #f0f0f0; /* Background color for input container */
+}
+
+.input input {
+	flex: 1;
+	padding: 10px;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px; /* Font size */
+	outline: none;
+}
+
+.input button {
+	padding: 8px 20px;
+	margin-left: 20px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px; /* Font size */
+	cursor: pointer;
+	transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.input button:hover {
+	background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+	.chatbot {
+		width: 95%; /* Adjusted width for smaller screens */
+		max-width: 90%; /* Adjusted maximum width for smaller screens */
+		height: 90%; /* Adjusted height for smaller screens */
+		max-height: 90vh; /* Adjusted maximum height for smaller screens */
+	}
+
+	.message {
+		font-size: 12px; /* Adjusted font size for smaller screens */
+	}
+}
+
+@keyframes slideInFromTop {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
+.error-message {
+	position: fixed; /* Position the error message relative to the viewport */
+	top: 0; /* Align the error message to the top of the viewport */
+	left: 50%; /* Center the error message horizontally */
+	transform: translateX(-50%); /* Adjust horizontal positioning */
+	padding: 10px 20px;
+	background-color: #f44336; /* Red color for error message */
+	color: white;
+	border-radius: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	display: flex; /* Use flexbox to align content */
+	justify-content: space-between; /* Align content at each end */
+	align-items: center; /* Center items vertically */
+	animation: slideInFromTop 0.5s ease forwards; /* Apply slide in animation */
+	opacity: 0; /* Initially hide the message */
+	visibility: hidden;
+	z-index: 999; /* Ensure the error message is above other content */
+	max-width: 90%; /* Set a maximum width for the error message */
+	max-height: 100vh; /* Set maximum height to viewport height */
+}
+
+@keyframes slideInFromTop {
+	from {
+		top: -100%; /* Start from above the viewport */
+		opacity: 0; /* Start with opacity 0 */
+		visibility: hidden;
+	}
+	to {
+		top: 0; /* Move to the top of the viewport */
+		opacity: 1; /* Fade in with full opacity */
+		visibility: visible;
+	}
+}
+
+.error-message.show {
+	opacity: 1; /* Show the message */
+	visibility: visible;
+}
+
+.error::placeholder {
+	color: red;
+}
+
+svg {
+	color: #c10b1f;
+	margin-right: 5px;
+	margin-left: 10px;
+	cursor: pointer;
+	width: 30px;
+	height: 40px;
+}
+
+.ADH img {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	cursor: pointer;
+	z-index: 101;
+}
+
+.chatbot {
+	display: flex;
+	flex-direction: column;
+	width: 30%; /* Set the width to 30% of the viewport width */
+	max-width: 500px; /* Maximum width for responsiveness */
+	height: 85vh; /* Set the height to 60% of the viewport height */
+	max-height: 700px; /* Maximum height for responsiveness */
+	border-radius: 10px;
+	overflow-y: auto;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth effect */
+	background-color: #fff; /* Background color for chatbot container */
+	z-index: 100;
+}
+
+.chatbot {
+	position: fixed;
+	bottom: 7.5%; /* Adjust positioning to bottom */
+	right: 33.6%; /* Adjust positioning to right */
+	transform: translateX(100%); /* Hide the chatbot off-screen initially */
+	transition: transform 0.3s ease; /* Smooth transition for animation */
+}
+
+.chatbot.show {
+	transform: translateX(0%); /* Slide in the chatbot when expanded */
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+	.chatbot {
+		width: 40%; /* Adjust width for very small screens */
+		max-width: 40%; /* Adjust maximum width for very small screens */
+		height: 80%; /* Adjust height for very small screens */
+		max-height: 600px; /* Adjust maximum height for very small screens */
+		bottom: 6%; /* Adjust bottom positioning for very small screens */
+		left: 54%; /* Adjust left positioning for very small screens */
+		transform: translateY(0%); /* Slide in the chatbot when expanded */
+	}
+}
+@media screen and (max-width: 480px) {
+	.chatbot {
+		width: 30%; /* Adjust width for very small screens */
+		max-width: 30%; /* Adjust maximum width for very small screens */
+		height: 70%; /* Adjust height for very small screens */
+		max-height: 600px; /* Adjust maximum height for very small screens */
+		bottom: 6%; /* Adjust bottom positioning for very small screens */
+		left: 54%; /* Adjust left positioning for very small screens */
+		transform: translateY(0%); /* Slide in the chatbot when expanded */
+	}
+}
+@media screen and (max-width: 600px) {
+	.chatbot {
+		width: 40%; /* Adjust width for very small screens */
+		max-width: 40%; /* Adjust maximum width for very small screens */
+		height: 70%; /* Adjust height for very small screens */
+		max-height: 600px; /* Adjust maximum height for very small screens */
+		bottom: 6%; /* Adjust bottom positioning for very small screens */
+		left: 54%; /* Adjust left positioning for very small screens */
+		transform: translateY(0%); /* Slide in the chatbot when expanded */
+	}
+}
+.navbar {
+	background-color: #f8f8ff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px;
+}
+
+.navbar .left {
+	display: flex;
+	align-items: center;
+}
+
+.navbar .left .chat-icon {
+	margin-right: 5px;
+}
+
+.navbar .right {
+	display: flex;
+	align-items: center;
+}
+
+.navbar .right img {
+	width: 50px;
+	border-radius: 50%;
+}
+
+.navbar span {
+	color: white;
+	font-weight: bold;
+	margin-left: 5px;
+}
+.right img#ahaorg {
+	width: 60px;
+	height: 60px;
+	background-color: transparent;
+}
+
+table {
+	margin: 0 auto;
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+th,
+td {
+	text-align: center;
+	vertical-align: middle;
+	padding: 2px;
+	border: 2px solid #ddd;
+	font-weight: 500;
+}
+
+th {
+	font-weight: 800;
+}
+
+.idsList {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+.transBtn {
+	cursor: pointer;
+	background-color: rgb(168, 205, 237);
+	color: black;
+	border: none;
+	display: block;
+	min-width: 5rem;
+	width: 10rem;
+	max-width: 15rem;
+	margin-bottom: 10px;
+}
+
+/* Add this to your CSS file */
+.success-color {
+	background-color: green; /* Green color for success */
+}
+
+.failure-color {
+	background-color: red; /* Red color for failure */
+}
+
+.skip-color {
+	background-color: yellow; /* Yellow color for skip */
+}
+
+@media screen and (max-width: 600px) {
+	.transBtn {
+		width: auto;
+	}
+}

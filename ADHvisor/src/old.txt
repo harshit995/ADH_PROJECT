@@ -1,0 +1,428 @@
+// import { useState, useRef, useEffect } from "react";
+// import "./App.css"; // Ensure this CSS file exists and contains styles for messages
+// import aha from "./assets/aha.jpg";
+// import ahacross from "./assets/ahacross.jpg";
+// import ahaorg from "./assets/ahaorg_1.png";
+// import { LexRuntimeV2 } from "aws-sdk"; // Make sure to import from aws-sdk v3
+// import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs
+
+// // Create a LexRuntimeV2Client instance
+// const lexRuntime = new LexRuntimeV2({
+//   // region: "us-east-1",
+//   region: "ap-southeast-2",
+//   credentials: {
+//     accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+//     secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+//   },
+// });
+
+// export default function MyComponent() {
+//   const [messages, setMessages] = useState([]);
+//   const [userInput, setUserInput] = useState("");
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [inputError, setInputError] = useState(false);
+//   const [showChatbot, setShowChatbot] = useState(false); // Add showChatbot state
+//   const [sessionId, setSessionId] = useState(uuidv4()); // Generate a unique session ID
+
+//   const inputRef = useRef(null);
+//   const messagesEndRef = useRef(null); // Reference to the end of messages
+
+//   useEffect(() => {
+//     scrollToBottom();
+//   }, [messages]); // Scroll whenever messages update
+
+//   const scrollToBottom = () => {
+//     if (messagesEndRef.current) {
+//       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+//     }
+//   };
+
+//   const handleMessageSend = async () => {
+//     const message = userInput.trim();
+//     if (message !== "") {
+//       setMessages((prevMessages) => [
+//         ...prevMessages,
+//         { text: message, user: "user" },
+//       ]);
+//       setUserInput("");
+
+//       try {
+//         setSessionId(uuidv4());
+
+//         const params = {
+//           botAliasId: import.meta.env.VITE_AWS_BOT_ALIAS_ID,
+//           botId: import.meta.env.VITE_AWS_BOT_ID,
+//           localeId: "en_US",
+//           text: message,
+//           sessionId: sessionId,
+//         };
+
+//         lexRuntime.recognizeText(params, function (err, data) {
+//           if (err) {
+//             console.log(err, err.stack);
+//             setErrorMessage("Error: Unable to connect to the bot");
+//           } else {
+//             const botResponse = data.messages[0].content;
+//             setMessages((prevMessages) => [
+//               ...prevMessages,
+//               { text: botResponse, user: "bot" },
+//             ]);
+//           }
+//         });
+//       } catch {
+//         setInputError(true);
+//         focusOnInput();
+//       }
+//     } else {
+//       setInputError(true);
+//       focusOnInput();
+//     }
+//   };
+
+//   const handleInputChange = (event) => {
+//     setUserInput(event.target.value);
+//     setInputError(false);
+//     dismissErrorMessage();
+//   };
+
+//   const handleInputKeyPress = (event) => {
+//     if (event.key === "Enter") {
+//       handleMessageSend();
+//     }
+//   };
+
+//   const dismissErrorMessage = () => {
+//     setErrorMessage("");
+//   };
+
+//   const toggleChatbot = () => {
+//     setShowChatbot(!showChatbot);
+//   };
+
+//   const focusOnInput = () => {
+//     if (inputRef.current) {
+//       inputRef.current.focus();
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="ADH" onClick={toggleChatbot}>
+//         {showChatbot ? (
+//           <img
+//             src={ahacross}
+//             alt="ADH"
+//             style={{ width: "50px", borderRadius: "50px 50px 0 50px" }}
+//           />
+//         ) : (
+//           <img
+//             src={aha}
+//             alt="ADH"
+//             style={{ width: "50px", borderRadius: "50px 50px 0 50px" }}
+//           />
+//         )}
+//       </div>
+//       {showChatbot && (
+//         <div className="chatbot">
+//           <div className="navbar">
+//             <div className="left">
+//               <svg
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 fill="#2F4F4F"
+//                 height="30px"
+//                 width="30px"
+//                 viewBox="0 0 24 24"
+//               >
+//                 <path d="M21,3H3C1.896,3,1,3.896,1,5v12c0,1.104,0.896,2,2,2h6l4,4V19h4l4,4V5C23,3.896,22.104,3,21,3z M18,13H6V11h12V13z M18,10H6 V8h12V10z" />
+//               </svg>
+//               <span style={{ color: "#2F4F4F" }}>ADHvisor</span>
+//             </div>
+//             <div className="right">
+//               <img src={ahaorg} id="ahaorg" alt="ADH" />
+//             </div>
+//           </div>
+//           <div className="messages">
+//             {messages.map((message, index) => (
+//               <div
+//                 key={index}
+//                 className={`message ${
+//                   message.user === "user" ? "user-message" : "bot-message"
+//                 }`}
+//                 dangerouslySetInnerHTML={{
+//                   __html: message.text.replace(/([;.]+)/g, "<br>"),
+//                 }}
+//               ></div>
+//             ))}
+//             <div ref={messagesEndRef} />{" "}
+//             {/* This is the reference to the end of messages */}
+//           </div>
+//           <div className="input">
+//             <input
+//               ref={inputRef}
+//               type="text"
+//               value={userInput}
+//               onChange={handleInputChange}
+//               onKeyPress={handleInputKeyPress}
+//               placeholder={
+//                 inputError
+//                   ? "Enter the message to continue..."
+//                   : "Type your message..."
+//               }
+//               className={inputError ? "error" : ""}
+//               style={{ border: inputError ? "1px solid red" : "" }}
+//               autoFocus
+//             />
+//             <svg
+//               onClick={handleMessageSend}
+//               xmlns="http://www.w3.org/2000/svg"
+//               viewBox="0 0 24 24"
+//               width="24"
+//               height="24"
+//               fill="none"
+//               stroke="#c10b1f"
+//               strokeWidth="2"
+//               strokeLinecap="round"
+//               strokeLinejoin="round"
+//               className="feather feather-send"
+//             >
+//               <line x1="22" y1="2" x2="11" y2="13"></line>
+//               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+//             </svg>
+//           </div>
+//           {errorMessage && <div className="error-message">{errorMessage}</div>}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+/*App2.jsx*/
+// import { useState, useRef, useEffect } from "react";
+// import "./App.css";
+// import aha from "./assets/aha.jpg";
+// import ahacross from "./assets/ahacross.jpg";
+// import ahaorg from "./assets/ahaorg_1.png";
+// import { LexRuntimeV2 } from "aws-sdk";
+// import { v4 as uuidv4 } from "uuid";
+
+// const lexRuntime = new LexRuntimeV2({
+//   region: "ap-southeast-2",
+//   credentials: {
+//     accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+//     secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY,
+//   },
+// });
+
+// export default function MyComponent() {
+//   const [messages, setMessages] = useState([]);
+//   const [userInput, setUserInput] = useState("");
+//   const [errorMessage, setErrorMessage] = useState("");
+//   const [inputError, setInputError] = useState(false);
+//   const [inputPlaceholder, setInputPlaceholder] = useState(
+//     "Type your message..."
+//   );
+//   const [showChatbot, setShowChatbot] = useState(false);
+//   const [sessionId, setSessionId] = useState(uuidv4());
+
+//   const inputRef = useRef(null);
+//   const messagesEndRef = useRef(null);
+
+//   useEffect(() => {
+//     scrollToBottom();
+//   }, [messages]);
+
+//   const scrollToBottom = () => {
+//     if (messagesEndRef.current) {
+//       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+//     }
+//   };
+
+//   const handleMessageSend = async (message = userInput.trim()) => {
+//     if (message !== "") {
+//       setMessages((prevMessages) => [
+//         ...prevMessages,
+//         { text: message, user: "user" },
+//       ]);
+
+//       try {
+//         setSessionId(uuidv4());
+
+//         const params = {
+//           botAliasId: import.meta.env.VITE_AWS_BOT_ALIAS_ID,
+//           botId: import.meta.env.VITE_AWS_BOT_ID,
+//           localeId: "en_US",
+//           text: message,
+//           sessionId: sessionId,
+//         };
+
+//         const data = await lexRuntime.recognizeText(params).promise();
+
+//         const botResponse = data.messages[0].content;
+//         setMessages((prevMessages) => [
+//           ...prevMessages,
+//           { text: botResponse, user: "bot" },
+//         ]);
+//       } catch (error) {
+//         console.error("Error handling message send:", error);
+//         setErrorMessage("Error: Unable to connect to the bot");
+//       }
+//     } else {
+//       setInputError(true);
+//       setInputPlaceholder("Enter the message to continue");
+//       focusOnInput();
+//     }
+//   };
+
+//   const handleTransactionIdClick = (transactionId) => {
+//     setUserInput(transactionId);
+//     handleMessageSend(transactionId);
+//   };
+
+//   const handleInputChange = (event) => {
+//     setUserInput(event.target.value);
+//     setInputError(false);
+//     setInputPlaceholder("Type your message...");
+//     dismissErrorMessage();
+//   };
+
+//   const handleInputKeyPress = (event) => {
+//     if (event.key === "Enter") {
+//       handleMessageSend();
+//     }
+//   };
+
+//   const dismissErrorMessage = () => {
+//     setErrorMessage("");
+//   };
+
+//   const toggleChatbot = () => {
+//     setShowChatbot(!showChatbot);
+//   };
+
+//   const focusOnInput = () => {
+//     if (inputRef.current) {
+//       inputRef.current.focus();
+//     }
+//   };
+
+//   const handleSendButtonClick = () => {
+//     if (userInput.trim() === "") {
+//       setInputError(true);
+//       setInputPlaceholder("Enter the message to continue");
+//       focusOnInput();
+//     } else {
+//       setInputError(false);
+//       handleMessageSend();
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <div className="ADH" onClick={toggleChatbot}>
+//         {showChatbot ? (
+//           <img
+//             src={ahacross}
+//             alt="ADH"
+//             style={{ width: "50px", borderRadius: "50px 50px 0 50px" }}
+//           />
+//         ) : (
+//           <img
+//             src={aha}
+//             alt="ADH"
+//             style={{ width: "50px", borderRadius: "50px 50px 0 50px" }}
+//           />
+//         )}
+//       </div>
+//       {showChatbot && (
+//         <div className="chatbot">
+//           <div className="navbar">
+//             <div className="left">
+//               <svg
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 fill="#2F4F4F"
+//                 height="30px"
+//                 width="30px"
+//                 viewBox="0 0 24 24"
+//               >
+//                 <path d="M21,3H3C1.896,3,1,3.896,1,5v12c0,1.104,0.896,2,2,2h6l4,4V19h4l4,4V5C23,3.896,22.104,3,21,3z M18,13H6V11h12V13z M18,10H6 V8h12V10z" />
+//               </svg>
+//               <span style={{ color: "#2F4F4F" }}>ADHvisor</span>
+//             </div>
+//             <div className="right">
+//               <img src={ahaorg} id="ahaorg" alt="ADH" />
+//             </div>
+//           </div>
+
+//           <div className="messages">
+//             {messages.map((message, index) => (
+//               <div
+//                 key={index}
+//                 className={`message ${
+//                   message.user === "user" ? "user-message" : "bot-message"
+//                 }`}
+//               >
+//                 {message.text.split(/([;.]+)/g).map((part, i) => {
+//                   if (part.match(/[;.]+/)) {
+//                     return <br key={i} />;
+//                   } else if (part.match(/\d+/)) {
+//                     return (
+//                       <button
+//                         key={i}
+//                         className="transaction-id"
+//                         onClick={() => handleTransactionIdClick(part)}
+//                         style={{
+//                           cursor: "pointer",
+//                           backgroundColor: "rgb(243, 205, 255)",
+//                           color: "#fff",
+//                           border: "none",
+//                           padding: "5px 10px",
+//                           borderRadius: "10px",
+//                           marginTop: "10px",
+//                         }}
+//                       >
+//                         {part}
+//                       </button>
+//                     );
+//                   } else {
+//                     return part;
+//                   }
+//                 })}
+//               </div>
+//             ))}
+//             <div ref={messagesEndRef} />
+//           </div>
+//           <div className="input">
+//             <input
+//               ref={inputRef}
+//               type="text"
+//               value={userInput}
+//               onChange={handleInputChange}
+//               onKeyPress={handleInputKeyPress}
+//               placeholder={inputPlaceholder}
+//               className={inputError ? "error" : ""}
+//               style={{ border: inputError ? "1px solid red" : "" }}
+//               autoFocus
+//             />
+//             <svg
+//               onClick={handleSendButtonClick}
+//               xmlns="http://www.w3.org/2000/svg"
+//               viewBox="0 0 24 24"
+//               width="24"
+//               height="24"
+//               fill="none"
+//               stroke="#c10b1f"
+//               strokeWidth="2"
+//               strokeLinecap="round"
+//               strokeLinejoin="round"
+//               className="feather feather-send"
+//             >
+//               <line x1="22" y1="2" x2="11" y2="13"></line>
+//               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+//             </svg>
+//           </div>
+//           {errorMessage && <div className="error-message">{errorMessage}</div>}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
